@@ -1,0 +1,29 @@
+package com.coinlovers.criptomoedas.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.coinlovers.criptomoedas.dto.response.CriptoPrecoResponse;
+import com.coinlovers.criptomoedas.service.CriptoMoedaService;
+
+@RestController
+@RequestMapping("/criptoMoedas")
+public class CriptoMoedaController { 
+	
+	private CriptoMoedaService service;
+
+	public CriptoMoedaController(CriptoMoedaService service) {
+		this.service = service;
+	}
+
+	@GetMapping("/preco")
+	public ResponseEntity<CriptoPrecoResponse> consultaPreco(@RequestParam String criptoMoeda, 
+			@RequestParam(required = false) String moedaCotacao){
+		return ResponseEntity.status(HttpStatus.OK).body(service.consultarPreco(criptoMoeda, moedaCotacao));
+	}
+	
+}
