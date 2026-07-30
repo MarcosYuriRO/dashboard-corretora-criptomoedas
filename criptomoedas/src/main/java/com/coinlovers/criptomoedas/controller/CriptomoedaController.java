@@ -1,5 +1,7 @@
 package com.coinlovers.criptomoedas.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,15 +10,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coinlovers.criptomoedas.dto.response.CriptoPrecoResponse;
-import com.coinlovers.criptomoedas.service.CriptoMoedaService;
+import com.coinlovers.criptomoedas.dto.response.CriptosUltimas24HorasResponse;
+import com.coinlovers.criptomoedas.service.CriptomoedaService;
 
 @RestController
 @RequestMapping("/criptoMoedas")
-public class CriptoMoedaController { 
+public class CriptomoedaController { 
 	
-	private CriptoMoedaService service;
+	private CriptomoedaService service;
 
-	public CriptoMoedaController(CriptoMoedaService service) {
+	public CriptomoedaController(CriptomoedaService service) {
 		this.service = service;
 	}
 
@@ -24,6 +27,11 @@ public class CriptoMoedaController {
 	public ResponseEntity<CriptoPrecoResponse> consultaPreco(@RequestParam String criptoMoeda, 
 			@RequestParam(required = false) String moedaCotacao){
 		return ResponseEntity.status(HttpStatus.OK).body(service.consultarPreco(criptoMoeda, moedaCotacao));
+	}
+	
+	@GetMapping("/24h/valorizacao")
+	public ResponseEntity<List<CriptosUltimas24HorasResponse>> consultaMaisVendidas() {
+		return ResponseEntity.status(HttpStatus.OK).body(service.consultaCriptoMoedasUltimas24Horas());
 	}
 	
 }
