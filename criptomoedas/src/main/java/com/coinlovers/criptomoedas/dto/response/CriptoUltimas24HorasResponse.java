@@ -3,7 +3,7 @@ package com.coinlovers.criptomoedas.dto.response;
 import lombok.Builder;
 
 @Builder
-public record CriptosUltimas24HorasResponse(String criptoMoeda,
+public record CriptoUltimas24HorasResponse(String criptoMoeda,
 		Double ultimoPreco,
 		Double porcentagemMudancaPreco,
 		Double volume) {

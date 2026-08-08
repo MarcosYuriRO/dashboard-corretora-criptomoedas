@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.coinlovers.criptomoedas.client.BinanceAPIClient;
-import com.coinlovers.criptomoedas.dto.client.BinanceCriptosUltimas24HorasResponse;
-import com.coinlovers.criptomoedas.dto.response.CriptosUltimas24HorasResponse;
+import com.coinlovers.criptomoedas.dto.client.BinanceCriptoUltimas24HorasResponse;
+import com.coinlovers.criptomoedas.dto.response.CriptoUltimas24HorasResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,57 +24,49 @@ public class CriptomoedaService {
 		this.client = client;
 	}
 	
-	public List<CriptosUltimas24HorasResponse> consultaCriptomoeda(String criptoMoeda) {
-		String simbolo = criptoMoeda + MOEDA_COTACAO_PADRAO;
+	public List<CriptoUltimas24HorasResponse> consultaCriptomoeda(String criptomoeda) {
+		String simbolo = criptomoeda + MOEDA_COTACAO_PADRAO;
 		log.info("Consultando o sistema da Binance sobre o preço da criptomoeda {}.", simbolo);
 		
-		List<BinanceCriptosUltimas24HorasResponse> response = client.consultarUltimas24Horas();
+		List<BinanceCriptoUltimas24HorasResponse> response = client.consultarUltimas24Horas();
 		
 		log.info("Consulta de preço realizada!");
 		
-		if (criptoMoeda == null) {
+		if (criptomoeda == null) {
 			return response.stream()
-					.filter(cripto -> cripto.criptoMoeda().endsWith(MOEDA_COTACAO_PADRAO))
-					.map(cripto -> CriptosUltimas24HorasResponse
-							.builder()
-							.criptoMoeda(cripto.criptoMoeda())
-							.ultimoPreco(cripto.ultimoPreco())
-							.porcentagemMudancaPreco(cripto.porcentagemMudancaPreco())
-							.volume(cripto.volume())
-							.build())
+					.filter(cripto -> cripto.criptomoeda().endsWith(MOEDA_COTACAO_PADRAO))
+					.map(cripto -> build(cripto))
 					.toList();
 		}
 		
 		return response.stream()
-				.filter(cripto -> cripto.criptoMoeda().contains(criptoMoeda.concat(MOEDA_COTACAO_PADRAO)))
-				.map(cripto -> CriptosUltimas24HorasResponse
-						.builder()
-						.criptoMoeda(cripto.criptoMoeda())
-						.ultimoPreco(cripto.ultimoPreco())
-						.porcentagemMudancaPreco(cripto.porcentagemMudancaPreco())
-						.volume(cripto.volume())
-						.build())
+				.filter(cripto -> cripto.criptomoeda().contains(criptomoeda.concat(MOEDA_COTACAO_PADRAO)))
+				.map(cripto -> build(cripto))
 				.toList();
 		
 	}
 	
-	public List<CriptosUltimas24HorasResponse> consultaCriptoMoedasUltimas24Horas() {
+	public List<CriptoUltimas24HorasResponse> consultaCriptomoedasUltimas24Horas() {
 		
 		
-		List<BinanceCriptosUltimas24HorasResponse> response = client.consultarUltimas24Horas();
+		List<BinanceCriptoUltimas24HorasResponse> response = client.consultarUltimas24Horas();
 		
 		return response.stream()
-				.filter(cripto -> cripto.criptoMoeda().endsWith(MOEDA_COTACAO_PADRAO))
-				.sorted(Comparator.comparing(BinanceCriptosUltimas24HorasResponse::porcentagemMudancaPreco).reversed())
-				.map(cripto -> CriptosUltimas24HorasResponse
-						.builder()
-						.criptoMoeda(cripto.criptoMoeda())
-						.ultimoPreco(cripto.ultimoPreco())
-						.porcentagemMudancaPreco(cripto.porcentagemMudancaPreco())
-						.volume(cripto.volume())
-						.build())
+				.filter(cripto -> cripto.criptomoeda().endsWith(MOEDA_COTACAO_PADRAO))
+				.sorted(Comparator.comparing(BinanceCriptoUltimas24HorasResponse::porcentagemMudancaPreco).reversed())
+				.map(cripto -> build(cripto))
 				.limit(LIMITE_CRIPTOMOEDAS)
 				.toList();
+	}
+	
+	private CriptoUltimas24HorasResponse build(BinanceCriptoUltimas24HorasResponse binanceCripto) {
+		return CriptoUltimas24HorasResponse
+		.builder()
+		.criptoMoeda(binanceCripto.criptomoeda())
+		.ultimoPreco(binanceCripto.ultimoPreco())
+		.porcentagemMudancaPreco(binanceCripto.porcentagemMudancaPreco())
+		.volume(binanceCripto.volume())
+		.build();
 	}
 	
 }
